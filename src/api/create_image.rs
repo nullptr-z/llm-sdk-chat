@@ -1,3 +1,5 @@
+use std::default;
+
 use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 
@@ -41,31 +43,35 @@ pub struct CreateImageRequest {
     user: Option<String>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize)]
 pub enum ImageModel {
+    #[default]
     #[serde(rename = "dall-e-3")]
     DallE3,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ImageQuality {
+    #[default]
     #[serde(rename = "standard")]
     Standard,
     #[serde(rename = "hd")]
     Hd,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ImageResponseFormat {
+    #[default]
     Url,
     B64Json,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ImageSize {
+    #[default]
     #[serde(rename = "1024x1024")]
     Large,
     #[serde(rename = "1792x1024")]
@@ -74,11 +80,12 @@ pub enum ImageSize {
     LargeTall,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ImageStyle {
     #[serde(rename = "vivid")]
     Vivid,
+    #[default]
     #[serde(rename = "natural")]
     Natural,
 }
@@ -116,30 +123,6 @@ impl IntoRequest for CreateImageRequest {
     }
 }
 
-impl Default for ImageModel {
-    fn default() -> Self {
-        ImageModel::DallE3
-    }
-}
-
-impl Default for ImageQuality {
-    fn default() -> Self {
-        ImageQuality::Standard
-    }
-}
-
-impl Default for ImageSize {
-    fn default() -> Self {
-        ImageSize::Large
-    }
-}
-
-impl Default for ImageStyle {
-    fn default() -> Self {
-        ImageStyle::Vivid
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use std::fs;
@@ -154,7 +137,7 @@ mod tests {
     #[test]
     fn create_image_request_should_serialize() -> Result<()> {
         let req = CreateImageRequest::new("draw a picture of a chicken eating rice");
-        let json = serde_json::to_value(&req)?;
+        let json = serde_json::to_value(req)?;
 
         assert_eq!(
             json,
@@ -174,7 +157,7 @@ mod tests {
             .style(ImageStyle::Natural)
             .quality(ImageQuality::Hd)
             .build()?;
-        let json = serde_json::to_value(&req)?;
+        let json = serde_json::to_value(req)?;
 
         assert_eq!(
             json,
@@ -190,6 +173,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[ignore]
     async fn create_image_should_work() -> Result<()> {
         let sdk = LLmSdk::new(std::env::var("OPENAI_API_KEY")?);
         let req = CreateImageRequest::new("draw a picture of a chicken eating rice");
