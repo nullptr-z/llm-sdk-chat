@@ -48,5 +48,3 @@ impl LLmSdk {
         req.timeout(Duration::from_secs(TIMEOUT))
     }
 }
-
-// struct CompletionRequest {}
