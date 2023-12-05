@@ -1,5 +1,32 @@
-1
-00:00:00,000 --> 00:00:02,000
-欢迎来到爱泽拉斯 Welcome to愛泽拉斯
-
-
+ChatCompletionResponse {
+    id: "chatcmpl-8SScT26bh6oPlhPtrJf1Q13zx2ooi",
+    choices: [
+        ChatCompletionChoice {
+            finish_reason: ToolCalls,
+            index: 0,
+            message: AssistantMessage {
+                content: None,
+                name: None,
+                tool_calls: [
+                    ToolCalls {
+                        id: "call_eeojw6kaxyAoklNosfU3eRo7",
+                        type: Function,
+                        function: FunctionCall {
+                            name: "get_weather_forecast",
+                            arguments: "{\"city\":\"Shanghai\",\"unit\":\"Celsius\"}",
+                        },
+                    },
+                ],
+            },
+        },
+    ],
+    created: 1701793889,
+    model: GPT3Turbo,
+    system_fingerprint: "fp_eeff13170a",
+    object: "chat.completion",
+    usage: ChatCompletionUsage {
+        completion_tokens: 22,
+        prompt_tokens: 140,
+        total_tokens: 162,
+    },
+}

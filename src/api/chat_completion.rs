@@ -143,6 +143,8 @@ pub enum ChatCompleteModel {
     GPT4Turbo,
     #[serde(rename = "gpt-4-1106-vision-preview")]
     GPT4TurboVersion,
+    #[serde(rename = "babbage-002")]
+    Test,
 }
 
 #[derive(Debug, Clone, Serialize, Builder)]
