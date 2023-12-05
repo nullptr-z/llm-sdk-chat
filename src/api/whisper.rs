@@ -1,6 +1,4 @@
-use std::default;
-
-use crate::IntoRequest;
+use crate::{IntoRequest, SDK};
 use derive_builder::Builder;
 use reqwest::multipart::{Form, Part};
 use serde::{Deserialize, Serialize};
@@ -109,9 +107,9 @@ impl WhisperRequest {
 impl IntoRequest for WhisperRequest {
     fn into_request(self, client: reqwest::Client) -> reqwest::RequestBuilder {
         let api_url = if self.request_type == WhisperRequestType::Translation {
-            "https://api.openai.com/v1/audio/translations"
+            format!("{}{}", SDK.base_url, "/audio/translations")
         } else {
-            "https://api.openai.com/v1/audio/transcriptions"
+            format!("{}{}", &SDK.base_url, "/audio/transcriptions")
         };
 
         client.post(api_url).multipart(self.into_form())
@@ -127,7 +125,7 @@ mod test {
 
     #[tokio::test]
     async fn transcription_should_work() -> Result<()> {
-        let sdk = crate::LLmSdk::new(std::env::var("OPENAI_API_KEY")?);
+        let sdk = &crate::SDK;
         let stream = fs::read("fixtures/test.mp3")?;
         let req = WhisperRequest::transcription(stream);
         let res = sdk.whisper(req).await?;
@@ -139,7 +137,7 @@ mod test {
 
     #[tokio::test]
     async fn transcription_with_response_should_work() -> Result<()> {
-        let sdk = crate::LLmSdk::new(std::env::var("OPENAI_API_KEY")?);
+        let sdk = &crate::SDK;
         let stream = fs::read("fixtures/test.mp3")?;
         let req = WhisperRequestBuilder::default()
             .file(stream)
@@ -153,7 +151,7 @@ mod test {
 
     #[tokio::test]
     async fn transcription_with_request_type_should_work() -> Result<()> {
-        let sdk = crate::LLmSdk::new(std::env::var("OPENAI_API_KEY")?);
+        let sdk = &crate::SDK;
         let stream = fs::read("fixtures/wow.mp3")?;
         let req = WhisperRequestBuilder::default()
             .file(stream)

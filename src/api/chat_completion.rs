@@ -263,9 +263,8 @@ pub enum FinishReason {
 
 impl IntoRequest for ChatCompletionRequest {
     fn into_request(self, client: reqwest::Client) -> reqwest::RequestBuilder {
-        client
-            .post("https://api.openai.com/v1/chat/completions")
-            .json(&self)
+        let url = format!("{}{}", crate::SDK.base_url, "/chat/completions");
+        client.post(url).json(&self)
     }
 }
 
@@ -415,7 +414,7 @@ mod tests {
     #[tokio::test]
     async fn simple_chat_completion_should_work() -> Result<()> {
         let req = get_simple_completion_request();
-        let sdk = crate::LLmSdk::new(std::env::var("OPENAI_API_KEY")?);
+        let sdk = &crate::SDK;
         let res = sdk.chat_completion(req).await?;
 
         let ress = res.clone();
@@ -482,7 +481,7 @@ mod tests {
     #[tokio::test]
     async fn chat_completion_with_tools_should_work() -> Result<()> {
         let req = get_tool_completion_request();
-        let sdk = crate::LLmSdk::new(std::env::var("OPENAI_API_KEY")?);
+        let sdk = &crate::SDK;
         let res = sdk.chat_completion(req).await?;
 
         let ress = res.clone();

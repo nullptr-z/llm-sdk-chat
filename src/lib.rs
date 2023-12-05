@@ -12,6 +12,7 @@ static TIMEOUT: u64 = 30;
 
 #[derive(Debug)]
 pub struct LLmSdk {
+    pub(crate) base_url: String,
     pub(crate) token: String,
     pub(crate) client: Client,
 }
@@ -21,8 +22,9 @@ pub trait IntoRequest {
 }
 
 impl LLmSdk {
-    pub fn new(token: impl Into<String>) -> Self {
+    pub fn new(base_url: impl Into<String>, token: impl Into<String>) -> Self {
         Self {
+            base_url: base_url.into(),
             token: token.into(),
             client: Client::new(),
         }
@@ -118,4 +120,11 @@ impl<T: JsonSchema> ToSchema for T {}
 #[ctor::ctor]
 fn init() {
     tracing_subscriber::fmt::init()
+}
+
+lazy_static::lazy_static! {
+    static ref SDK:LLmSdk=LLmSdk::new(
+        "https://api.openai.com/v1",
+        std::env::var("OPENAI_API_KEY").unwrap_or("".to_string())
+    );
 }

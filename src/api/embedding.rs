@@ -58,10 +58,8 @@ impl EmbeddingRequest {
 
 impl IntoRequest for EmbeddingRequest {
     fn into_request(self, client: reqwest::Client) -> reqwest::RequestBuilder {
-        println!("【 self 】==> {:#?}", serde_json::to_string(&self).unwrap());
-        client
-            .post("https://api.openai.com/v1/embeddings")
-            .json(&self)
+        let url = format!("{}{}", crate::SDK.base_url, "/embeddings");
+        client.post(url).json(&self)
     }
 }
 
@@ -118,14 +116,13 @@ impl From<&str> for EmbeddingInput {
 
 #[cfg(test)]
 mod tests {
-    use crate::LLmSdk;
 
     use super::*;
     use anyhow::{Ok, Result};
 
     #[tokio::test]
     async fn embeddings_should_work() -> Result<()> {
-        let sdk = LLmSdk::new(std::env::var("OPENAI_API_KEY")?);
+        let sdk = &crate::SDK;
         let req = EmbeddingRequest::new("The food was delicious and the waiter...");
         let res = sdk.embedding(req).await?;
         assert_eq!(res.data.len(), 1);
@@ -141,7 +138,7 @@ mod tests {
 
     #[tokio::test]
     async fn embeddings_input_array_should_work() -> Result<()> {
-        let sdk = LLmSdk::new(std::env::var("OPENAI_API_KEY")?);
+        let sdk = &crate::SDK;
         let req = EmbeddingRequest::new(vec![
             "The quick brown fox jumped over the lazy dog.".into(),
             "我是谁？我在哪？".into(),

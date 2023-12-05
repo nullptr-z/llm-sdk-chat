@@ -1,5 +1,5 @@
 ChatCompletionResponse {
-    id: "chatcmpl-8SScT26bh6oPlhPtrJf1Q13zx2ooi",
+    id: "chatcmpl-8STmdlhph32kxsGNJ33SEKnW6A9da",
     choices: [
         ChatCompletionChoice {
             finish_reason: ToolCalls,
@@ -9,7 +9,7 @@ ChatCompletionResponse {
                 name: None,
                 tool_calls: [
                     ToolCalls {
-                        id: "call_eeojw6kaxyAoklNosfU3eRo7",
+                        id: "call_tNdyjSyGqF7ou8dLssEL00zd",
                         type: Function,
                         function: FunctionCall {
                             name: "get_weather_forecast",
@@ -20,7 +20,7 @@ ChatCompletionResponse {
             },
         },
     ],
-    created: 1701793889,
+    created: 1701798363,
     model: GPT3Turbo,
     system_fingerprint: "fp_eeff13170a",
     object: "chat.completion",

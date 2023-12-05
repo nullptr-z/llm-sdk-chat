@@ -67,9 +67,8 @@ impl SpeechRequest {
 
 impl IntoRequest for SpeechRequest {
     fn into_request(self, client: reqwest::Client) -> reqwest::RequestBuilder {
-        client
-            .post("https://api.openai.com/v1/audio/speech")
-            .json(&self)
+        let url = format!("{}{}", crate::SDK.base_url, "/audio/speech");
+        client.post(url).json(&self)
     }
 }
 
@@ -82,7 +81,7 @@ mod test {
 
     #[tokio::test]
     async fn speech_should_work() -> Result<()> {
-        let sdk = crate::LLmSdk::new(std::env::var("OPENAI_API_KEY")?);
+        let sdk = &crate::SDK;
         let req = SpeechRequest::new("The quick brown fox jumped over the lazy dog");
         let res = sdk.speech(req).await?;
 

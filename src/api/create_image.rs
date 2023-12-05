@@ -115,9 +115,8 @@ impl CreateImageRequest {
 
 impl IntoRequest for CreateImageRequest {
     fn into_request(self, client: reqwest::Client) -> reqwest::RequestBuilder {
-        client
-            .post("https://api.openai.com/v1/images/generations")
-            .json(&self)
+        let url = format!("{}{}", crate::SDK.base_url, "/images/generations");
+        client.post(url).json(&self)
     }
 }
 
@@ -173,7 +172,7 @@ mod tests {
     #[tokio::test]
     #[ignore]
     async fn create_image_should_work() -> Result<()> {
-        let sdk = LLmSdk::new(std::env::var("OPENAI_API_KEY")?);
+        let sdk = &crate::SDK;
         let req = CreateImageRequest::new("draw a picture of a chicken eating rice");
         let res = sdk.create_image(req).await?;
         let image = &res.data[0];
