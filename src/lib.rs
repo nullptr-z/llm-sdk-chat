@@ -43,10 +43,33 @@ impl LLmSdk {
         Ok(res.json::<CreateImageResponse>().await?)
     }
 
+    /// Response media stream
     pub async fn speech(&self, req: SpeechRequest) -> Result<Bytes> {
         let req = self.prepare_request(req);
         let res = req.send_and_log().await?;
         Ok(res.bytes().await?)
+    }
+
+    // pub async fn translation(&self, req: TranslationRequest) -> Result<TranslationResponse> {
+    //     let req = self.prepare_request(req);
+    //     let res = req.send_and_log().await?;
+    //     Ok(res.json::<TranslationResponse>().await?)
+    // }
+
+    pub async fn transcription(&self, req: TranscriptionRequest) -> Result<TranscriptionResponse> {
+        let is_json = req.response_format == TranscriptionResponseFormat::Json;
+        let req = self.prepare_request(req);
+        let res = req.send_and_log().await?;
+
+        let ret = if is_json {
+            res.json::<TranscriptionResponse>().await?
+        } else {
+            TranscriptionResponse {
+                text: res.text().await?,
+            }
+        };
+
+        Ok(ret)
     }
 
     fn prepare_request(&self, req: impl IntoRequest) -> RequestBuilder {
@@ -72,8 +95,8 @@ impl SendAndLong for RequestBuilder {
         let status = res.status();
         if status.is_client_error() || status.is_server_error() {
             let text = res.text().await?;
-            tracing::error!("chat_completion failed: {}", text);
-            return Err(anyhow::anyhow!("chat_completion failed: {}", text));
+            tracing::error!("API failed: {}", text);
+            return Err(anyhow::anyhow!("API failed: {}", text));
         }
 
         Ok(res)

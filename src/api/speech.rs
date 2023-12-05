@@ -1,8 +1,6 @@
-use std::default;
-
-use crate::{IntoRequest, ToSchema};
+use crate::IntoRequest;
 use derive_builder::Builder;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize, Builder)]
 #[builder(pattern = "mutable")]
