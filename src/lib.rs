@@ -4,6 +4,7 @@ use anyhow::{Ok, Result};
 use api::*;
 use async_trait::async_trait;
 use reqwest::{Client, RequestBuilder, Response};
+use schemars::{schema_for, JsonSchema};
 use std::time::Duration;
 
 static TIMEOUT: u64 = 30;
@@ -71,6 +72,16 @@ impl SendAndLong for RequestBuilder {
         Ok(res)
     }
 }
+
+/// For tool function. If you have a function that you want ChatGPT to call, you shall put all params into a struct
+/// and derive schmears::JsonSchema for it. Then you use `StructName::to_schema` to generate json schema for tools.
+pub trait ToSchema: JsonSchema {
+    fn to_schema() -> serde_json::Value {
+        serde_json::to_value(schema_for!(Self)).unwrap()
+    }
+}
+
+impl<T: JsonSchema> ToSchema for T {}
 
 /// 在main函数之前运行
 #[cfg(test)]
